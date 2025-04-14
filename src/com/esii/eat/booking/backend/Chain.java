@@ -37,7 +37,7 @@ public class Chain {
     //Get Restaurant Position
     private int getRestaurantPosition(String name){
         for(int i = 0; i < numberOfRestaurants; i++){
-            if(restaurants[i].getName().equals(name)){
+            if(restaurants[i] != null && restaurants[i].getName().equals(name)){
                 return i;
             }
         }
@@ -58,20 +58,19 @@ public class Chain {
 
     }
 
-
     //Search Restaurant
     public Restaurant searchRestaurant(int numberOfPeople, String restaurantName){
         Restaurant restaurant = getRestaurant(restaurantName);
 
         if (restaurant != null) {
             int position = getRestaurantPosition(restaurantName);
+            int startIndex = (position + 1) % numberOfPeople;
 
-            for (int i = position; i < numberOfRestaurants; i++) {
+            for (int i = startIndex; i != position; i=(i+1)%numberOfRestaurants) {
                 if (restaurants[i].hasAvailableTables(numberOfPeople)) {
                     return restaurants[i];
                 }
             }
-
         }
         return null;
     }

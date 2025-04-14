@@ -14,6 +14,9 @@ public class Table {
     }
 
     //Getters and Setters
+    public int getCapacity() {
+        return capacity;
+    }
     public void setIsOccupied(boolean isOccupied) {
         this.isOccupied = isOccupied;
     }
@@ -32,7 +35,7 @@ public class Table {
 
     //Method to reserve a table
     public void reserve(int numberOfPeople, String reservationName) {
-        if(numberOfPeople >= 2 && numberOfPeople <= capacity && reservationName != null && !reservationName.trim().isEmpty()) {
+        if(numberOfPeople >= 1 && numberOfPeople <= capacity && reservationName != null && !reservationName.trim().isEmpty()) {
             this.reservationName = reservationName;
             this.isOccupied = true;
             this.occupiedSeats = numberOfPeople;
@@ -45,6 +48,7 @@ public class Table {
     }
 
     //To string method
+    @Override
     public String toString(){
         if(isOccupied){
             return "Name: " + reservationName + ", Number of Dinners: " + occupiedSeats;
