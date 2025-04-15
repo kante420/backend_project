@@ -67,6 +67,7 @@ public class Restaurant {
             for (int i = currentTableIndex; i < totalTables && tables_already_reserved < tables_needed; i++) {
                 if (!tables[i].isOccupied()) { //If the table is not ocuppied.
                     tables[i].reserve(numberOfPeople, reservationName); //We reserve one table
+                    availableTables--; //Update the available tables
                     return true;
                 }
             }
@@ -76,15 +77,16 @@ public class Restaurant {
                 if (!tables[i].isOccupied()) { //If the table is not occupied
                     if (tables_already_reserved == tables_needed - 1) { //If it´s the last table to reserve
                         tables[i].reserve(last_table_number_people, reservationName); //We asign the number of people for the last table
+                        availableTables--; //Update the available tables
                     } else { //If it is not the last table, we asign the maxCapacity number of people (6)
                         tables[i].reserve(tables[i].getCapacity(), reservationName);
+                        availableTables--; //Update the available tables
                     }
                     tables_already_reserved++; //Increment one table reserved
                 }
             }
 
             if (tables_already_reserved == tables_needed) { //If we have reserved all the tables needed
-                availableTables -= tables_needed; //Update the available tables
                 currentTableIndex += tables_needed; //Update the current index
                 return true;
             }
