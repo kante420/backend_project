@@ -1,6 +1,7 @@
 package com.esii.eat.booking.backend;
 
 import static com.esii.eat.booking.backend.Table.capacity;
+import java.util.Arrays;
 
 public class Restaurant {
     private final int additionalTables = 2;
@@ -9,12 +10,14 @@ public class Restaurant {
     private String name;
     private Table[] tables;
     private int totalTables;
+    private int availableExpandedTables; //TEST
 
     //Constructs a Restaurant object with a given name for it and a number of tables
     public Restaurant(String name, int totalTables){
         this.name = name;
         this.totalTables = totalTables;
         this.availableTables = totalTables + additionalTables;
+        this.availableExpandedTables = totalTables + additionalTables; //TEST
         //Initialization of the Table Array
         this.tables = new Table[totalTables];
         for(int i = 0; i < totalTables; i++) {
@@ -68,19 +71,39 @@ public class Restaurant {
                 if (!tables[i].isOccupied()) { //If the table is not ocuppied.
                     tables[i].reserve(numberOfPeople, reservationName); //We reserve one table
                     availableTables--; //Update the available tables
+                    availableExpandedTables--;
                     return true;
                 }
             }
-        } else { //If the reservation is for more than 6 people, we reserve more than one table
+        }
+        else { //If the reservation is for more than 6 people, we reserve more than one table
             // Si la reserva requiere más de una mesa
-            for (int i = currentTableIndex; i < totalTables && tables_already_reserved < tables_needed; i++) {
+            int counter_for_available=0;
+            for(int i =0; i < totalTables; i++) {
+                if(!tables[i].isOccupied()) {
+                    counter_for_available++;
+                }
+            }
+            if(counter_for_available < tables_needed) {
+                if(tables_needed <= counter_for_available+additionalTables){
+                    Table[] expanded_tables = Arrays.copyOf(tables, tables.length + additionalTables);
+                    tables = expanded_tables;
+                    for(int i = currentTableIndex; i < totalTables+2; i++) {
+                        tables[i] = new Table();
+                    }
+                }
+            }
+
+            for (int i = currentTableIndex; i < totalTables+additionalTables && tables_already_reserved < tables_needed; i++) {
                 if (!tables[i].isOccupied()) { //If the table is not occupied
                     if (tables_already_reserved == tables_needed - 1) { //If it´s the last table to reserve
                         tables[i].reserve(last_table_number_people, reservationName); //We asign the number of people for the last table
                         availableTables--; //Update the available tables
+                        availableExpandedTables--;
                     } else { //If it is not the last table, we asign the maxCapacity number of people (6)
                         tables[i].reserve(tables[i].getCapacity(), reservationName);
                         availableTables--; //Update the available tables
+                        availableExpandedTables--;
                     }
                     tables_already_reserved++; //Increment one table reserved
                 }
@@ -139,8 +162,8 @@ public class Restaurant {
     public String toString(){
         StringBuilder return_string_restaurant = new StringBuilder();
 
-        for(int i=0; i< totalTables; i++){
-            if(i == totalTables - 1){
+        for(int i=0; i<  tables.length; i++){
+            if(i == tables.length - 1){
                 if(tables[i].isOccupied()){
                     return_string_restaurant.append(" Table ").append(i + 1).append("\n Occupation: Occupied \n");
                     return_string_restaurant.append("Number of dinners: ").append(tables[i].getOccupiedSeats());
